@@ -84,13 +84,18 @@ export default function BookingPage() {
     }
   };
 
-  const renderCalendar = () => {
-    const now = new Date();
-    const today = new Date(now);
-    today.setHours(0, 0, 0, 0);
-    const monday = getMonday(today);
-    monday.setDate(monday.getDate() + weekOffset * 7);
-
+const renderCalendar = () => {
+  // 
+  const now = new Date();
+  const today = new Date(now);
+  // ... (중간 코드들)
+  return (
+    <div className="bg-white rounded-lg p-6">
+      // ... (html)
+    </div>
+  );
+};
+// 
     const days = Array.from({ length: 5 }, (_, i) => {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
@@ -323,3 +328,5 @@ export default function BookingPage() {
     </div>
   );
 }
+
+
