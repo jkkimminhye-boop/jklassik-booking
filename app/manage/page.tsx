@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -17,7 +17,7 @@ type BookingData = {
 
 const DOW = ['일', '월', '화', '수', '목', '금', '토'];
 
-export default function ManagePage() {
+function ManagePageContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   
@@ -49,7 +49,6 @@ export default function ManagePage() {
         return;
       }
 
-      // 토큰 만료 확인
       if (new Date(data.token_expires_at) < now) {
         setState('expired');
         return;
@@ -193,7 +192,6 @@ export default function ManagePage() {
             <div className="space-y-3 mb-4">
               <button
                 onClick={() => {
-                  // 캘린더 페이지로 이동하여 새 일정 선택
                   window.location.href = '/';
                 }}
                 className="w-full py-3 bg-gray-100 text-gray-700 rounded font-semibold hover:bg-gray-200"
@@ -215,7 +213,6 @@ export default function ManagePage() {
         </div>
       </div>
 
-      {/* 취소 확인 모달 */}
       {showCancelModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-6 z-50">
           <div className="bg-white rounded-lg p-8 max-w-sm text-center">
@@ -243,5 +240,13 @@ export default function ManagePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ManagePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">로드 중...</div>}>
+      <ManagePageContent />
+    </Suspense>
   );
 }
