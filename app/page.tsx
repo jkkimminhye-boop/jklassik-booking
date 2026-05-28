@@ -21,7 +21,6 @@ export default function BookingPage() {
   });
   const [takenSlots, setTakenSlots] = useState<Record<string, string[]>>({});
 
-  // 예약된 슬롯 로드
   useEffect(() => {
     loadTakenSlots();
   }, []);
@@ -84,18 +83,13 @@ export default function BookingPage() {
     }
   };
 
-const renderCalendar = () => {
-  // 
-  const now = new Date();
-  const today = new Date(now);
-  // ... (중간 코드들)
-  return (
-    <div className="bg-white rounded-lg p-6">
-      // ... (html)
-    </div>
-  );
-};
-// 
+  const renderCalendar = () => {
+    const now = new Date();
+    const today = new Date(now);
+    today.setHours(0, 0, 0, 0);
+    const monday = getMonday(today);
+    monday.setDate(monday.getDate() + weekOffset * 7);
+
     const days = Array.from({ length: 5 }, (_, i) => {
       const d = new Date(monday);
       d.setDate(monday.getDate() + i);
@@ -105,7 +99,7 @@ const renderCalendar = () => {
     const dateRange = `${days[0].getMonth() + 1}-${String(days[0].getDate()).padStart(2, '0')} ~ ${days[4].getMonth() + 1}-${String(days[4].getDate()).padStart(2, '0')}`;
 
     return (
-      <div className="bg-white rounded-lg p-6">
+      <div className="bg-white rounded-lg p-6 overflow-x-auto">
         <div className="flex justify-between items-center mb-4">
           <button onClick={() => setWeekOffset(Math.max(0, weekOffset - 1))} className="p-2 border rounded">
             ←
@@ -116,63 +110,64 @@ const renderCalendar = () => {
           </button>
         </div>
 
-        <table className="w-full text-sm">
-          <thead>
-            <tr>
-              <th className="text-right pr-2">시간</th>
-              {days.map((d) => (
-                <th key={formatDate(d)} className="text-center">
-                  {d.getMonth() + 1}-{String(d.getDate()).padStart(2, '0')} {DOW[d.getDay()]}
-                  {formatDate(d) === formatDate(today) && <div className="text-xs text-red-600">오늘</div>}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {ALL_SLOTS.map((slot, idx) => (
-              <tr key={slot}>
-                {idx === AM_SLOTS.length && <tr style={{ height: '5px' }} />}
-                <td className="text-right pr-2 text-gray-600">{slot}</td>
-                {days.map((d) => {
-                  const ds = formatDate(d);
-                  const isHol = isHoliday(d);
-                  const isTaken = takenSlots[ds]?.includes(slot);
-                  const open = isBookingOpen(d, slot, now);
-                  const isPast = d < today || (formatDate(d) === formatDate(today) && slot <= `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
-
-                  let bgColor = 'bg-gray-300 text-white';
-                  let disabled = true;
-
-                  if (!isHol && !isPast && !isTaken && open) {
-                    bgColor = 'bg-pink-100 border-2 border-pink-300 text-pink-800 cursor-pointer hover:bg-pink-200';
-                    disabled = false;
-                  } else if (isTaken) {
-                    bgColor = 'bg-gray-200 text-gray-600 line-through';
-                  } else if (isPast || isHol) {
-                    bgColor = 'bg-gray-300 text-white';
-                  } else {
-                    bgColor = 'bg-gray-300 text-white';
-                  }
-
-                  return (
-                    <td key={`${ds}-${slot}`} className="text-center p-1">
-                      <button
-                        disabled={disabled}
-                        onClick={() => {
-                          setSelectedSlot({ date: d, time: slot });
-                          setStep(2);
-                        }}
-                        className={`w-full py-2 rounded text-xs font-semibold ${bgColor} ${disabled ? 'cursor-not-allowed' : ''}`}
-                      >
-                        {isTaken ? '예약종료' : isPast || isHol ? '마감' : '예약가능'}
-                      </button>
-                    </td>
-                  );
-                })}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr>
+                <th className="text-right pr-2 py-2 border">시간</th>
+                {days.map((d) => (
+                  <th key={formatDate(d)} className="text-center py-2 border px-2 min-w-20">
+                    {d.getMonth() + 1}-{String(d.getDate()).padStart(2, '0')} {DOW[d.getDay()]}
+                    {formatDate(d) === formatDate(today) && <div className="text-xs text-red-600">오늘</div>}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {ALL_SLOTS.map((slot) => (
+                <tr key={slot}>
+                  <td className="text-right pr-2 py-2 text-gray-600 border font-semibold">{slot}</td>
+                  {days.map((d) => {
+                    const ds = formatDate(d);
+                    const isHol = isHoliday(d);
+                    const isTaken = takenSlots[ds]?.includes(slot);
+                    const open = isBookingOpen(d, slot, now);
+                    const isPast = d < today || (formatDate(d) === formatDate(today) && slot <= `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
+
+                    let bgColor = 'bg-gray-300 text-white';
+                    let disabled = true;
+
+                    if (!isHol && !isPast && !isTaken && open) {
+                      bgColor = 'bg-pink-100 border-2 border-pink-300 text-pink-800 cursor-pointer hover:bg-pink-200';
+                      disabled = false;
+                    } else if (isTaken) {
+                      bgColor = 'bg-gray-200 text-gray-600 line-through';
+                    } else if (isPast || isHol) {
+                      bgColor = 'bg-gray-300 text-white';
+                    } else {
+                      bgColor = 'bg-gray-300 text-white';
+                    }
+
+                    return (
+                      <td key={`${ds}-${slot}`} className="text-center p-1 border">
+                        <button
+                          disabled={disabled}
+                          onClick={() => {
+                            setSelectedSlot({ date: d, time: slot });
+                            setStep(2);
+                          }}
+                          className={`w-full py-2 rounded text-xs font-semibold ${bgColor} ${disabled ? 'cursor-not-allowed' : ''}`}
+                        >
+                          {isTaken ? '예약종료' : isPast || isHol ? '마감' : '예약가능'}
+                        </button>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   };
@@ -328,5 +323,3 @@ const renderCalendar = () => {
     </div>
   );
 }
-
-
