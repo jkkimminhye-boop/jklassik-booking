@@ -111,12 +111,12 @@ export default function BookingPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
+          <table className="w-full text-sm">
             <thead>
-              <tr>
-                <th className="text-right pr-2 py-2 border">시간</th>
+              <tr className="border-b">
+                <th className="text-right pr-2 py-2">시간</th>
                 {days.map((d) => (
-                  <th key={formatDate(d)} className="text-center py-2 border px-2 min-w-20">
+                  <th key={formatDate(d)} className="text-center py-2 px-2 min-w-20 border-b">
                     {d.getMonth() + 1}-{String(d.getDate()).padStart(2, '0')} {DOW[d.getDay()]}
                     {formatDate(d) === formatDate(today) && <div className="text-xs text-red-600">오늘</div>}
                   </th>
@@ -125,14 +125,17 @@ export default function BookingPage() {
             </thead>
             <tbody>
               {ALL_SLOTS.map((slot) => (
-                <tr key={slot}>
-                  <td className="text-right pr-2 py-2 text-gray-600 border font-semibold">{slot}</td>
+                <tr key={slot} className="border-b">
+                  <td className="text-right pr-2 py-2 text-gray-600 font-semibold">{slot}</td>
                   {days.map((d) => {
                     const ds = formatDate(d);
                     const isHol = isHoliday(d);
                     const isTaken = takenSlots[ds]?.includes(slot);
                     const open = isBookingOpen(d, slot, now);
-                    const isPast = d < today || (formatDate(d) === formatDate(today) && slot <= `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
+                    const isPast =
+                      d < today ||
+                      (formatDate(d) === formatDate(today) &&
+                        slot <= `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
 
                     let bgColor = 'bg-gray-300 text-white';
                     let disabled = true;
@@ -149,7 +152,7 @@ export default function BookingPage() {
                     }
 
                     return (
-                      <td key={`${ds}-${slot}`} className="text-center p-1 border">
+                      <td key={`${ds}-${slot}`} className="text-center p-1">
                         <button
                           disabled={disabled}
                           onClick={() => {
