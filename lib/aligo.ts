@@ -3,6 +3,7 @@ import axios from 'axios';
 const ALIGO_BASE_URL = 'https://apis.aligo.in';
 const ALIGO_API_KEY = process.env.ALIGO_API_KEY || '';
 const ALIGO_USER_ID = process.env.ALIGO_USER_ID || '';
+const ALIGO_SENDER = '01094101577'; // 발신번호
 
 interface AligoSendParams {
   receiver: string; // 수신자 번호 (010-1234-5678 형식)
@@ -27,6 +28,7 @@ export async function sendAligoMessage(params: AligoSendParams): Promise<{ succe
       user_id: ALIGO_USER_ID,
       key: ALIGO_API_KEY,
       receiver: params.receiver.replace(/-/g, ''), // 하이픈 제거
+      sender: ALIGO_SENDER, // 발신번호
       msg: params.message,
       msg_type: params.msg_type || 'CTA', // 기본값: 카톡
       failover: params.failover !== 'N' ? 'Y' : 'N', // 기본값: SMS 자동 대체
