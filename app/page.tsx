@@ -132,8 +132,7 @@ export default function BookingPage() {
                     const isHol = isHoliday(d);
                     const isTaken = takenSlots[ds]?.includes(slot);
                     const open = isBookingOpen(d, slot, now);
-                    const isPast = d < today || formatDate(d) === formatDate(today);
-                    const isPast = (() => {
+                                     const isPast = (() => {
                       // 과거 날짜
                       if (d < today) return true;
                       
