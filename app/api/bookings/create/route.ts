@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { sendBookingConfirmationMessage } from '@/lib/aligo';
 import { generateBookingNo, generateToken, formatDate } from '@/lib/constants';
-import { sendBookingConfirmationEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,11 +24,7 @@ export async function POST(request: NextRequest) {
     if (!smsResult.success) {
       console.warn('알리고 메시지 발송 실패:', smsResult.error);
     }
-    if (email) {
-      try {
-        await sendBookingConfirmationEmail(email, student_name, bookingNo, consultation_date, consultation_time, cancelManageUrl);
-      } catch (emailError) {
-        console.warn('이메일 발송 실패:', emailError);
+   
       }
     }
     return NextResponse.json({ success: true, booking_no: bookingNo, message: smsResult.success ? '예약이 완료되었습니다.' : '예약이 완료되었으나 문자 발송에 실패했습니다.' });
