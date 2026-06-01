@@ -7,7 +7,6 @@ import { sendBookingConfirmationEmail } from '@/lib/email';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
     const {
       student_name,
       phone_number,
@@ -46,4 +45,13 @@ export async function POST(request: NextRequest) {
     ]);
 
     if (error) {
-      console.error('DB 저장 실패:',
+      console.error('DB 저장 실패:', error);
+      return NextResponse.json({ error: '예약 저장에 실패했습니다.' }, { status: 500 });
+    }
+
+    const cancelManageUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://booking.jklassik.com'}/manage?token=${token}`;
+
+    const smsResult = await sendBookingConfirmationMessage(phone_number, bookingNo, consultation_date, consultation_time, cancelManageUrl);
+
+    if (!smsResult.success) {
+      console.warn('알리고 메시지 발송 실패:', smsRes
