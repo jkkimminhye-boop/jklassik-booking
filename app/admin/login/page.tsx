@@ -18,7 +18,7 @@ export default function AdminLogin() {
     try {
       // TODO: 실제 로그인 구현 (Supabase Auth 또는 간단한 토큰 인증)
       // 현재는 하드코딩된 계정으로 테스트
-      if (email === 'admin@jklassik.com' && password === 'admin123') {
+      if (email === 'admin@jklassik.com' && password === '#bhqaZ%A_6cH-4x') {
         localStorage.setItem('admin_token', 'admin_' + Date.now());
         router.push('/admin/dashboard');
       } else {
@@ -74,13 +74,9 @@ export default function AdminLogin() {
             {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
-
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-300 rounded text-xs text-blue-800">
-          <strong>테스트 계정:</strong>
-          <div>이메일: admin@jklassik.com</div>
-          <div>비밀번호: admin123</div>
-        </div>
       </div>
     </div>
   );
 }
+
+
