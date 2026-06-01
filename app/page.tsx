@@ -132,11 +132,29 @@ export default function BookingPage() {
                     const isHol = isHoliday(d);
                     const isTaken = takenSlots[ds]?.includes(slot);
                     const open = isBookingOpen(d, slot, now);
-                    const isPast =
-                      d < today ||
-                      (formatDate(d) === formatDate(today) &&
-                        slot <= `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
-
+                    const isPast = d < today || formatDate(d) === formatDate(today);
+                    const isPast = (() => {
+                      // 과거 날짜
+                      if (d < today) return true;
+                      
+                      // 오늘 날짜
+                      if (formatDate(d) === formatDate(today)) return true;
+                      
+                      // 내일 날짜 (하루 전 마감)
+                      const tomorrow = new Date(today);
+                      tomorrow.setDate(today.getDate() + 1);
+                      if (formatDate(d) === formatDate(tomorrow)) return true;
+                      
+                      // 월요일인 경우: 전주 금요일 오후 6시 이후면 마감
+                      if (d.getDay() === 1) {
+                        const lastFriday = new Date(d);
+                        lastFriday.setDate(d.getDate() - 3);
+                        lastFriday.setHours(18, 0, 0, 0);
+                        if (now > lastFriday) return true;
+                      }
+                      
+                      return false;
+                    })();
                     let bgColor = 'bg-gray-300 text-white';
                     let disabled = true;
 
