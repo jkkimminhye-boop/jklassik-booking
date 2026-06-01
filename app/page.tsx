@@ -133,16 +133,18 @@ export default function BookingPage() {
                     const isTaken = takenSlots[ds]?.includes(slot);
                     const open = isBookingOpen(d, slot, now);
                     const isPast = (() => {
-                      // 과거 날짜
-                      if (d < today) return true;
+                      // 과거 날짜 또는 오늘
+                      if (d <= today) return true;
+                    
+                      // 해당 날짜+시간이 현재시각+24시간 이내면 마감
+                      const [slotHour, slotMin] = slot.split(':').map(Number);
+                      const slotDateTime = new Date(d);
+                      slotDateTime.setHours(slotHour, slotMin, 0, 0);
                       
-                      // 오늘 날짜
-                      if (formatDate(d) === formatDate(today)) return true;
+                      const deadline = new Date(now);
+                      deadline.setHours(deadline.getHours() + 24);
                       
-                      // 내일 날짜 (24시간 전 마감)
-                      const tomorrow = new Date(today);
-                      tomorrow.setDate(today.getDate() + 1);
-                      if (formatDate(d) === formatDate(tomorrow)) return true;
+                      if (slotDateTime < deadline) return true;
                       
                       // 월요일인 경우: 전주 금요일 오후 6시 이후면 마감
                       if (d.getDay() === 1) {
