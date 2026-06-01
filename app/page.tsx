@@ -132,14 +132,14 @@ export default function BookingPage() {
                     const isHol = isHoliday(d);
                     const isTaken = takenSlots[ds]?.includes(slot);
                     const open = isBookingOpen(d, slot, now);
-                                     const isPast = (() => {
+                    const isPast = (() => {
                       // 과거 날짜
                       if (d < today) return true;
                       
                       // 오늘 날짜
                       if (formatDate(d) === formatDate(today)) return true;
                       
-                      // 내일 날짜 (하루 전 마감)
+                      // 내일 날짜 (24시간 전 마감)
                       const tomorrow = new Date(today);
                       tomorrow.setDate(today.getDate() + 1);
                       if (formatDate(d) === formatDate(tomorrow)) return true;
