@@ -19,7 +19,7 @@ export async function sendBookingConfirmationEmail(
 
   // 학생에게 발송
   await resend.emails.send({
-    from: 'JKLASSIK <noreply@jklassik.com>',
+    from: 'JKLASSIK <onboarding@resend.dev>',
     to: studentEmail,
     subject: `[제이클래식] 예약이 완료되었습니다 - ${bookingNo}`,
     html: `
@@ -39,7 +39,7 @@ export async function sendBookingConfirmationEmail(
 
   // 제이클래식에게 발송
   await resend.emails.send({
-    from: 'JKLASSIK Booking <noreply@jklassik.com>',
+    from: 'JKLASSIK <onboarding@resend.dev>',
     to: JKLASSIK_EMAIL,
     subject: `[새 예약] ${studentName} - ${monthDay}(${dow}) ${consultationTime}`,
     html: `
